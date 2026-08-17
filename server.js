@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const stateRoutes = require("./routes/state");
 const authRoutes = require("./routes/auth");
-const { attachUser } = require("./middleware/auth");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -16,18 +15,18 @@ if (!MONGODB_URI || !process.env.JWT_SECRET) {
   process.exit(1);
 }
 
-const FRONTEND_DIR = path.join(__dirname, "..", "frontend");
+const FRONTEND_DIST = path.join(__dirname, "..", "frontend", "dist");
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.static(FRONTEND_DIR));
+app.use(express.static(FRONTEND_DIST));
 
 app.use("/api/auth", authRoutes);
 app.use("/api", stateRoutes);
 
-app.get("/", attachUser, (req, res) => {
-  if (!req.userId) return res.redirect("/login.html");
-  res.sendFile(path.join(FRONTEND_DIR, "notepad.html"));
+app.get("*", (req, res, next) => {
+  if (req.path.startsWith("/api")) return next();
+  res.sendFile(path.join(FRONTEND_DIST, "index.html"));
 });
 
 mongoose

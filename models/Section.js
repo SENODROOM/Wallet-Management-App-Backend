@@ -17,6 +17,7 @@ const sectionSchema = new mongoose.Schema({
     enum: ["income", "poly", "monthly", "wallets"]
   },
   budget: { type: Number, default: 0 },
+  description: { type: String, default: "" },
   items: { type: [itemSchema], default: [] }
 });
 

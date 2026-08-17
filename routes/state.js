@@ -10,13 +10,13 @@ router.use(requireAuth);
 router.get("/state", async (req, res) => {
   const docs = await Section.find({ user: req.userId });
   const state = {
-    income: { budget: 0, items: [] },
-    poly: { budget: 0, items: [] },
-    monthly: { budget: 0, items: [] },
-    wallets: { budget: 0, items: [] }
+    income: { budget: 0, items: [], description: "" },
+    poly: { budget: 0, items: [], description: "" },
+    monthly: { budget: 0, items: [], description: "" },
+    wallets: { budget: 0, items: [], description: "" }
   };
   docs.forEach((doc) => {
-    state[doc.section] = { budget: doc.budget, items: doc.items };
+    state[doc.section] = { budget: doc.budget, items: doc.items, description: doc.description };
   });
   res.json(state);
 });
@@ -27,9 +27,10 @@ router.put("/state/:section", async (req, res) => {
     return res.status(400).json({ error: "Invalid section" });
   }
 
-  const { budget, items } = req.body;
+  const { budget, items, description } = req.body;
   const update = { items: Array.isArray(items) ? items : [] };
   if (typeof budget === "number") update.budget = budget;
+  if (typeof description === "string") update.description = description;
 
   const doc = await Section.findOneAndUpdate(
     { user: req.userId, section },

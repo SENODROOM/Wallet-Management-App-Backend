@@ -3,7 +3,7 @@ const Section = require("../models/Section");
 const { requireAuth } = require("../middleware/auth");
 
 const router = express.Router();
-const VALID_SECTIONS = ["income", "poly", "monthly"];
+const VALID_SECTIONS = ["income", "poly", "monthly", "wallets"];
 
 router.use(requireAuth);
 
@@ -12,7 +12,8 @@ router.get("/state", async (req, res) => {
   const state = {
     income: { budget: 0, items: [] },
     poly: { budget: 0, items: [] },
-    monthly: { budget: 0, items: [] }
+    monthly: { budget: 0, items: [] },
+    wallets: { budget: 0, items: [] }
   };
   docs.forEach((doc) => {
     state[doc.section] = { budget: doc.budget, items: doc.items };

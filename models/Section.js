@@ -14,7 +14,7 @@ const sectionSchema = new mongoose.Schema({
   section: {
     type: String,
     required: true,
-    enum: ["income", "poly", "monthly"]
+    enum: ["income", "poly", "monthly", "wallets"]
   },
   budget: { type: Number, default: 0 },
   items: { type: [itemSchema], default: [] }

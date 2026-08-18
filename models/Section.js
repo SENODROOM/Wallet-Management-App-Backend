@@ -1,10 +1,20 @@
 const mongoose = require("mongoose");
 
+const walletSubItemSchema = new mongoose.Schema(
+  {
+    name: { type: String, default: "" },
+    price: { type: Number, default: 0 }
+  },
+  { _id: false }
+);
+
 const itemSchema = new mongoose.Schema(
   {
     day: { type: String, default: "" },
     name: { type: String, default: "" },
-    price: { type: Number, default: 0 }
+    price: { type: Number, default: 0 },
+    // Only used by the "wallets" section: itemized entries nested under a wallet.
+    items: { type: [walletSubItemSchema], default: undefined }
   },
   { _id: false }
 );

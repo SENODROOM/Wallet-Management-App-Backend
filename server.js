@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const stateRoutes = require("./routes/state");
 const authRoutes = require("./routes/auth");
+const notepadRoutes = require("./routes/notepads");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -45,6 +46,7 @@ app.use("/api", async (req, res, next) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api", stateRoutes);
+app.use("/api", notepadRoutes);
 
 app.get("*", (req, res, next) => {
   if (req.path.startsWith("/api")) return next();

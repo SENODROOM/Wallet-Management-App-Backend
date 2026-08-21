@@ -22,7 +22,7 @@ router.post("/signup", async (req, res) => {
   const user = await User.create({ email, passwordHash });
 
   res.cookie(COOKIE_NAME, signToken(user._id), cookieOptions());
-  res.status(201).json({ email: user.email });
+  res.status(201).json({ email: user.email, name: user.name });
 });
 
 router.post("/login", async (req, res) => {
@@ -36,7 +36,7 @@ router.post("/login", async (req, res) => {
   }
 
   res.cookie(COOKIE_NAME, signToken(user._id), cookieOptions());
-  res.json({ email: user.email });
+  res.json({ email: user.email, name: user.name });
 });
 
 router.post("/logout", (req, res) => {
@@ -45,9 +45,18 @@ router.post("/logout", (req, res) => {
 });
 
 router.get("/me", requireAuth, async (req, res) => {
-  const user = await User.findById(req.userId).select("email");
+  const user = await User.findById(req.userId).select("email name");
   if (!user) return res.status(401).json({ error: "Not authenticated" });
-  res.json({ email: user.email });
+  res.json({ email: user.email, name: user.name });
+});
+
+router.put("/name", requireAuth, async (req, res) => {
+  const name = (req.body.name || "").trim();
+  if (!name) return res.status(400).json({ error: "Name is required." });
+
+  const user = await User.findByIdAndUpdate(req.userId, { name }, { new: true }).select("email name");
+  if (!user) return res.status(401).json({ error: "Not authenticated" });
+  res.json({ email: user.email, name: user.name });
 });
 
 module.exports = router;

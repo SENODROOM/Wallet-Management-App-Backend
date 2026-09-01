@@ -5,7 +5,9 @@ const { requireAuth } = require("../middleware/auth");
 const router = express.Router();
 const VALID_SECTIONS = ["income", "poly", "monthly", "wallets"];
 
-router.use(requireAuth);
+// Scoped to the paths this router owns: it is mounted at /api alongside the
+// others, and an unscoped guard here would answer for all of them.
+router.use("/state", requireAuth);
 
 router.get("/state", async (req, res) => {
   const docs = await Section.find({ user: req.userId });

@@ -6,7 +6,8 @@ const { isPeriod, planRollover } = require("../lib/period");
 
 const router = express.Router();
 
-router.use(requireAuth);
+// Scoped to the paths this router owns — see the note in routes/state.js.
+router.use("/monthly", requireAuth);
 
 function sumItems(items) {
   return (items || []).reduce((sum, item) => sum + (Number(item.price) || 0), 0);

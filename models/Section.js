@@ -28,6 +28,9 @@ const sectionSchema = new mongoose.Schema({
   },
   budget: { type: Number, default: 0 },
   description: { type: String, default: "" },
+  // "monthly" only: the "YYYY-MM" month these entries belong to, so a new
+  // month can be told apart from the one still in progress.
+  period: { type: String, default: "" },
   items: { type: [itemSchema], default: [] }
 });
 

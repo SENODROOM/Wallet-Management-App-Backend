@@ -10,13 +10,18 @@ router.use(requireAuth);
 router.get("/state", async (req, res) => {
   const docs = await Section.find({ user: req.userId });
   const state = {
-    income: { budget: 0, items: [], description: "" },
-    poly: { budget: 0, items: [], description: "" },
-    monthly: { budget: 0, items: [], description: "" },
-    wallets: { budget: 0, items: [], description: "" }
+    income: { budget: 0, items: [], description: "", period: "" },
+    poly: { budget: 0, items: [], description: "", period: "" },
+    monthly: { budget: 0, items: [], description: "", period: "" },
+    wallets: { budget: 0, items: [], description: "", period: "" }
   };
   docs.forEach((doc) => {
-    state[doc.section] = { budget: doc.budget, items: doc.items, description: doc.description };
+    state[doc.section] = {
+      budget: doc.budget,
+      items: doc.items,
+      description: doc.description,
+      period: doc.period || ""
+    };
   });
   res.json(state);
 });
@@ -27,10 +32,15 @@ router.put("/state/:section", async (req, res) => {
     return res.status(400).json({ error: "Invalid section" });
   }
 
-  const { budget, items, description } = req.body;
+  const { budget, items, description, period } = req.body;
   const update = { items: Array.isArray(items) ? items : [] };
   if (typeof budget === "number") update.budget = budget;
   if (typeof description === "string") update.description = description;
+  // Every monthly save re-stamps the month it belongs to, so entries can never
+  // drift into the wrong period if a tab is left open past the 1st.
+  if (section === "monthly" && typeof period === "string" && /^\d{4}-(0[1-9]|1[0-2])$/.test(period)) {
+    update.period = period;
+  }
 
   const doc = await Section.findOneAndUpdate(
     { user: req.userId, section },

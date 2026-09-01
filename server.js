@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const stateRoutes = require("./routes/state");
 const authRoutes = require("./routes/auth");
 const notepadRoutes = require("./routes/notepads");
+const monthlyRoutes = require("./routes/monthly");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -16,8 +17,6 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(FRONTEND_DIST));
 
-// Reuse the connection across invocations instead of reconnecting (and
-// blocking startup) on every serverless cold start.
 let connectPromise = null;
 function ensureDbConnection() {
   if (mongoose.connection.readyState === 1) return Promise.resolve();
@@ -47,6 +46,7 @@ app.use("/api", async (req, res, next) => {
 app.use("/api/auth", authRoutes);
 app.use("/api", stateRoutes);
 app.use("/api", notepadRoutes);
+app.use("/api", monthlyRoutes);
 
 app.get("*", (req, res, next) => {
   if (req.path.startsWith("/api")) return next();
@@ -55,12 +55,11 @@ app.get("*", (req, res, next) => {
   });
 });
 
-// Vercel imports this module and calls the exported app per request; it
-// never runs the block below, so a missing/bad connection fails just that
-// one request (handled above) instead of crashing the whole function.
 if (!process.env.VERCEL) {
   if (!MONGODB_URI || !process.env.JWT_SECRET) {
-    console.error("Missing MONGODB_URI or JWT_SECRET. Copy .env.example to .env and set them.");
+    console.error(
+      "Missing MONGODB_URI or JWT_SECRET. Copy .env.example to .env and set them.",
+    );
     process.exit(1);
   }
   mongoose

@@ -53,25 +53,32 @@ router.post("/monthly/rollover", async (req, res) => {
 
   const plan = planRollover(doc, period);
 
-  if (plan.archive) {
+  for (const archive of plan.archives) {
     await MonthlyArchive.findOneAndUpdate(
-      { user: req.userId, period: plan.archive },
-      { $set: { budget: doc.budget, description: doc.description, items: doc.items, archivedAt: new Date() } },
+      { user: req.userId, period: archive.period },
+      {
+        $set: {
+          budget: archive.budget,
+          description: archive.description,
+          items: archive.items.map((item) => ({ day: item.day, name: item.name, price: item.price })),
+          archivedAt: new Date()
+        }
+      },
       { upsert: true }
     );
   }
-  if (plan.reset) {
+  if (plan.keep) {
     // The budget amount is the recurring monthly allowance, so it carries
-    // forward; only the entries and the note start clean.
-    doc.items = [];
-    doc.description = "";
+    // forward; the entries left behind are the ones dated in the new month.
+    doc.items = plan.keep.map((item) => ({ day: item.day, name: item.name, price: item.price }));
   }
+  if (plan.reset) doc.description = "";
   doc.period = plan.period;
   if (doc.isModified()) await doc.save();
 
   res.json({
     period: doc.period,
-    archived: plan.archive,
+    archived: plan.archives.length ? plan.archives[plan.archives.length - 1].period : null,
     monthly: liveView(doc),
     history: await historyFor(req.userId)
   });

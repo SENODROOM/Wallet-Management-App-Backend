@@ -13,6 +13,10 @@ const itemSchema = new mongoose.Schema(
     day: { type: String, default: "" },
     name: { type: String, default: "" },
     price: { type: Number, default: 0 },
+    // Marks an entry as fuel spending, so the Monthly Budget can total and
+    // print the petrol lines on their own without splitting them into a
+    // separate section.
+    petrol: { type: Boolean, default: false },
     // Only used by the "wallets" section: itemized entries nested under a wallet.
     items: { type: [walletSubItemSchema], default: undefined }
   },

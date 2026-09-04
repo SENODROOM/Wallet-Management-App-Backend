@@ -4,7 +4,10 @@ const itemSchema = new mongoose.Schema(
   {
     day: { type: String, default: "" },
     name: { type: String, default: "" },
-    price: { type: Number, default: 0 }
+    price: { type: Number, default: 0 },
+    // See the note in models/Section.js — a closed month keeps its petrol
+    // marks so the saved record still prints a petrol report.
+    petrol: { type: Boolean, default: false }
   },
   { _id: false }
 );

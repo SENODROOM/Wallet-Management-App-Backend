@@ -61,7 +61,12 @@ router.post("/monthly/rollover", async (req, res) => {
         $set: {
           budget: archive.budget,
           description: archive.description,
-          items: archive.items.map((item) => ({ day: item.day, name: item.name, price: item.price })),
+          items: archive.items.map((item) => ({
+            day: item.day,
+            name: item.name,
+            price: item.price,
+            petrol: !!item.petrol
+          })),
           archivedAt: new Date()
         }
       },
@@ -71,7 +76,12 @@ router.post("/monthly/rollover", async (req, res) => {
   if (plan.keep) {
     // The budget amount is the recurring monthly allowance, so it carries
     // forward; the entries left behind are the ones dated in the new month.
-    doc.items = plan.keep.map((item) => ({ day: item.day, name: item.name, price: item.price }));
+    doc.items = plan.keep.map((item) => ({
+      day: item.day,
+      name: item.name,
+      price: item.price,
+      petrol: !!item.petrol
+    }));
   }
   if (plan.reset) doc.description = "";
   doc.period = plan.period;

@@ -18,7 +18,7 @@ const seedData = {
       { name: "Portable Box", price: 20000 },
       { name: "Tickets x2", price: 5000 },
       { name: "OLX", price: 2750 },
-      { name: "Donated to Poly Learning Initiative", price: 30000 }
+      { name: "Donated to Poly Learning Foundation", price: 30000 }
     ]
   },
   poly: {

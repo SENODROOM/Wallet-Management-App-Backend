@@ -12,7 +12,7 @@ const ADMIN_EMAIL = "saadamin691@gmail.com";
 router.use("/notepads", requireAuth);
 
 // Custom notepads are only for non-admin accounts; the admin keeps the fixed
-// Quantum Logics Income / Poly Learning Initiative sections instead.
+// Quantum Logics Income / Poly Learning Foundation sections instead.
 router.use("/notepads", async (req, res, next) => {
   const user = await User.findById(req.userId).select("email");
   if (!user) return res.status(401).json({ error: "Not authenticated" });

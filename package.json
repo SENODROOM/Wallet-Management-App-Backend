@@ -2,7 +2,7 @@
   "name": "wallet-notepad",
   "version": "1.0.0",
   "private": true,
-  "description": "Personal wallet notepad (Quantum Logics Income, Poly Learning Initiative, Monthly Budget) backed by MongoDB.",
+  "description": "Personal wallet notepad (Quantum Logics Income, Poly Learning Foundation, Monthly Budget) backed by MongoDB.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
